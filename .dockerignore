@@ -1,0 +1,7 @@
+Dockerfile
+README.md
+.pre-commit-config.yaml
+.env.example
+.gitignore
+.mypy_cache
+.pytest_cache

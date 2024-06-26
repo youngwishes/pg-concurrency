@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    container_name: "web"
+    command: uvicorn src.main:app --reload --workers 2 --host 0.0.0.0 --port 8000
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      pg-database:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  pg-database:
+    image: postgres:latest
+    container_name: "db"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    command: ["postgres", "-c", "log_statement=all"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 3s
+      timeout: 10s
+      retries: 10
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
