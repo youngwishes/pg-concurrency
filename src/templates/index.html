@@ -12,41 +12,48 @@
 
 <div class="container text-center">
   <nav class="navbar bg-body-tertiary">
-    <form action="{{ url_for('ddl:create-db-schema') }}" method="POST">
+    <form action="{{ url_for('concurrency:create-db-schema') }}" method="POST">
       {% if is_schema_created %}
       <button type="submit" class="btn btn-outline-success" disabled>Создать таблицы в БД</button>
       {% else %}
       <button type="submit" class="btn btn-outline-success">Создать таблицы в БД</button>
       {% endif %}
     </form>
-    <form action="{{ url_for('ddl:drop-db-schema') }}" method="POST">
+    <form action="{{ url_for('concurrency:populate-db') }}" method="POST">
+      {% if is_db_populated %}
+      <button type="submit" class="btn btn-outline-warning" disabled>Наполнить БД</button>
+      {% else %}
+      <button type="submit" class="btn btn-outline-warning">Наполнить БД</button>
+      {% endif %}
+    </form>
+    <form action="{{ url_for('concurrency:drop-db-schema') }}" method="POST">
       <button type="submit" class="btn btn-outline-dark">
         Включить RC {% if isolation_level.value == 2 %}(включено){% else %}{% endif %}
       </button>
     </form>
-    <form action="{{ url_for('ddl:drop-db-schema') }}" method="POST">
+    <form action="{{ url_for('concurrency:drop-db-schema') }}" method="POST">
       <button type="submit" class="btn btn-outline-dark">
         Включить RR {% if isolation_level.value == 3 %}(включено){% else %}{% endif %}
       </button>
     </form>
-    <form action="{{ url_for('ddl:drop-db-schema') }}" method="POST">
+    <form action="{{ url_for('concurrency:drop-db-schema') }}" method="POST">
       <button type="submit" class="btn btn-outline-dark">
         Включить Serializable {% if isolation_level.value == 4 %}(включено){% else %}{% endif %}
       </button>
     </form>
-    <form action="{{ url_for('ddl:drop-db-schema') }}" method="POST">
+    <form action="{{ url_for('concurrency:drop-db-schema') }}" method="POST">
       <button type="submit" class="btn btn-outline-danger">Удалить таблицы из БД</button>
     </form>
   </nav>
   <br><br><br><br><br><br><br>
   <p class="text-center">Запросы для параллельного выполнения.</p>
-  <form action="{{ url_for('dml:make-sql-query') }}" method="POST">
+  <form id="myForm" method="POST">
     <div class="input-group mb-3">
       <div class="input-group">
         <span class="input-group-text">SQL 1</span>
-        <textarea class="form-control" name="first_sql" id="first_sql" aria-label="SQL 1"></textarea>
+        <textarea class="form-control" name="first" id="first" aria-label="SQL 1"></textarea>
         <span class="input-group-text">SQL 2</span>
-        <textarea class="form-control" name="second_sql" id="second_sql" aria-label="SQL 2"></textarea>
+        <textarea class="form-control" name="second" id="second" aria-label="SQL 2"></textarea>
       </div>
     </div>
     <button type="submit" class="btn btn-outline-primary">
@@ -66,6 +73,26 @@
         integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
         crossorigin="anonymous"></script>
 
+<script>
+  var form = document.getElementById('myForm');
+  form.onsubmit = function(event){
+        var xhr = new XMLHttpRequest();
+        var formData = new FormData(form);
+        //open the request
+        xhr.open('POST','http://localhost:8001/make-sql-query')
+        xhr.setRequestHeader("Content-Type", "application/json");
 
+        //send the form data
+        xhr.send(JSON.stringify(Object.fromEntries(formData)));
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                form.reset(); //reset form after AJAX success or do something else
+            }
+        }
+        //Fail the onsubmit to avoid page refresh.
+        return false;
+    }
+</script>
 </body>
 </html>

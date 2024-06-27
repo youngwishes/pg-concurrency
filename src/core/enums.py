@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class IsolationEnum(Enum):
-    READ_COMMITED: int = 2
-    REPEATABLE_READ: int = 3
-    SERIALIZABLE: int = 4
+class IsolationEnum(str, Enum):
+    READ_COMMITTED: str = "read_committed"
+    REPEATABLE_READ: str = "repeatable_read"
+    SERIALIZABLE: str = "serializable"

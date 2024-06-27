@@ -1,6 +1,6 @@
 import asyncio
 from logging.config import fileConfig
-from core.concurrency.database import Base
+from concurrency.gateways.models import Base
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
