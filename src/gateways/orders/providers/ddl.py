@@ -1,4 +1,4 @@
-from domains.providers.ddl import DDLProvider
+from core.orders.abstract.providers.ddl import DDLProvider
 
 
 class OrderProvider(DDLProvider):

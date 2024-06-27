@@ -1,9 +1,8 @@
-from pydantic import BaseModel
 from decimal import Decimal
+from core.dto import BaseDTO
 
 
-class Customer(BaseModel):
-    id: int
+class Customer(BaseDTO):
     first_name: str
     last_name: str
     phone_number: str
@@ -20,7 +19,7 @@ class Customer(BaseModel):
         )
 
 
-class OrderItem(BaseModel):
+class OrderItem(BaseDTO):
     id: int
     name: str
     price: Decimal
@@ -36,7 +35,7 @@ class OrderItem(BaseModel):
         )
 
 
-class Order(BaseModel):
+class Order(BaseDTO):
     id: int
     status: int
     customer: Customer
