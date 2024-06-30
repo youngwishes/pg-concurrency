@@ -1,6 +1,5 @@
 from pydantic import Field, BaseModel
 from typing import Optional
-
 from core.enums import IsolationEnum
 
 

@@ -1,8 +1,8 @@
-"""Concurrency Settings
+"""Init
 
-Revision ID: bdc4d94ffd57
+Revision ID: 2da90c937635
 Revises:
-Create Date: 2024-06-27 20:11:37.248338
+Create Date: 2024-06-29 20:30:16.793205
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "bdc4d94ffd57"
+revision: str = "2da90c937635"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -29,10 +29,7 @@ def upgrade() -> None:
         sa.Column(
             "Текущий уровень изоляции",
             sa.Enum(
-                "READ_COMMITTED",
-                "REPEATABLE_READ",
-                "SERIALIZABLE",
-                name="isolation_enum",
+                "READ_COMMITTED", "REPEATABLE_READ", "SERIALIZABLE", name="isolation"
             ),
             nullable=False,
         ),

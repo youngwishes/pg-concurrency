@@ -20,29 +20,33 @@
       {% endif %}
     </form>
     <form action="{{ url_for('concurrency:populate-db') }}" method="POST">
-      {% if is_db_populated %}
+      {% if is_db_populated or not is_schema_created %}
       <button type="submit" class="btn btn-outline-warning" disabled>Наполнить БД</button>
       {% else %}
       <button type="submit" class="btn btn-outline-warning">Наполнить БД</button>
       {% endif %}
     </form>
-    <form action="{{ url_for('concurrency:drop-db-schema') }}" method="POST">
+    <form action="{{ url_for('concurrency:set-rc-isolation') }}" method="POST">
       <button type="submit" class="btn btn-outline-dark">
-        Включить RC {% if isolation_level.value == 2 %}(включено){% else %}{% endif %}
+        Включить RC {% if isolation_level.value == 'read_committed' %}(включено){% else %}{% endif %}
+      </button>
+    </form>
+    <form action="{{ url_for('concurrency:set-rr-isolation') }}" method="POST">
+      <button type="submit" class="btn btn-outline-dark">
+        Включить RR {% if isolation_level.value == 'repeatable_read' %}(включено){% else %}{% endif %}
+      </button>
+    </form>
+    <form action="{{ url_for('concurrency:set-ser-isolation') }}" method="POST">
+      <button type="submit" class="btn btn-outline-dark">
+        Включить Serializable {% if isolation_level.value == 'serializable' %}(включено){% else %}{% endif %}
       </button>
     </form>
     <form action="{{ url_for('concurrency:drop-db-schema') }}" method="POST">
-      <button type="submit" class="btn btn-outline-dark">
-        Включить RR {% if isolation_level.value == 3 %}(включено){% else %}{% endif %}
-      </button>
-    </form>
-    <form action="{{ url_for('concurrency:drop-db-schema') }}" method="POST">
-      <button type="submit" class="btn btn-outline-dark">
-        Включить Serializable {% if isolation_level.value == 4 %}(включено){% else %}{% endif %}
-      </button>
-    </form>
-    <form action="{{ url_for('concurrency:drop-db-schema') }}" method="POST">
-      <button type="submit" class="btn btn-outline-danger">Удалить таблицы из БД</button>
+      {% if is_schema_created %}
+        <button type="submit" class="btn btn-outline-danger">Удалить таблицы из БД</button>
+      {% else %}
+        <button type="submit" class="btn btn-outline-danger" disabled>Удалить таблицы из БД</button>
+      {% endif %}
     </form>
   </nav>
   <br><br><br><br><br><br><br>
@@ -50,10 +54,17 @@
   <form id="myForm" method="POST">
     <div class="input-group mb-3">
       <div class="input-group">
-        <span class="input-group-text">SQL 1</span>
-        <textarea class="form-control" name="first" id="first" aria-label="SQL 1"></textarea>
-        <span class="input-group-text">SQL 2</span>
-        <textarea class="form-control" name="second" id="second" aria-label="SQL 2"></textarea>
+        {% if is_schema_created %}
+          <span class="input-group-text">SQL 1</span>
+          <textarea class="form-control" name="first" id="first" aria-label="SQL 1"></textarea>
+          <span class="input-group-text">SQL 2</span>
+          <textarea class="form-control" name="second" id="second" aria-label="SQL 2"></textarea>
+        {% else %}
+          <span class="input-group-text">SQL 1</span>
+          <textarea class="form-control" name="first" id="first" aria-label="SQL 1" disabled></textarea>
+          <span class="input-group-text">SQL 2</span>
+          <textarea class="form-control" name="second" id="second" aria-label="SQL 2" disabled></textarea>
+        {% endif %}
       </div>
     </div>
     <button type="submit" class="btn btn-outline-primary">

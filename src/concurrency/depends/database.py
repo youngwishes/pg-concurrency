@@ -1,9 +1,13 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from core.database import get_session
 from concurrency.domains.service import ConcurrencyService
 from concurrency.gateways.repo import ConcurrencyRepo
+
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def _get_concurrency_repo(

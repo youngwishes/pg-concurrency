@@ -11,7 +11,7 @@ router = APIRouter()
 @router.post(
     "/make-sql-query",
     name="dml:make-sql-query",
-    description="Сделать SQL запрос.",
+    description="Сделать SQL запросы.",
     response_model=OrderQueries,
 )
 async def make_sql_query(

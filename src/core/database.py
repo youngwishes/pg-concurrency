@@ -3,13 +3,14 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from starlette.requests import Request
 
+from core.enums import PostgresInterfaceEnum
 from core.settings import settings
 
 Base = declarative_base()
 
 engine = create_async_engine(
-    settings.POSTGRES_URI_ALCHEMY,
-    echo=True,
+    settings.resolve_postgres_uri(PostgresInterfaceEnum.SQL_ALCHEMY),
+    echo=False,
     future=True,
 )
 

@@ -7,6 +7,8 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+
+from core.enums import PostgresInterfaceEnum
 from core.settings import settings
 
 # this is the Alembic Config object, which provides
@@ -25,7 +27,9 @@ target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
-config.set_main_option("sqlalchemy.url", settings.POSTGRES_URI_ALCHEMY)
+config.set_main_option(
+    "sqlalchemy.url", settings.resolve_postgres_uri(PostgresInterfaceEnum.SQL_ALCHEMY)
+)
 # ... etc.
 
 

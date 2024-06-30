@@ -1,5 +1,5 @@
-from core.enums import IsolationEnum
 from pydantic import Field, BaseModel
+from core.enums import IsolationEnum
 
 
 class BaseEntity(BaseModel):

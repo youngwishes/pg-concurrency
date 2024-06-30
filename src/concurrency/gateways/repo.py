@@ -1,42 +1,35 @@
-from typing import Sequence
-
+from __future__ import annotations
+from typing import Sequence, TYPE_CHECKING
 from sqlalchemy import select, insert, update
+from concurrency.gateways.models import PGConcurrencySettings
+from concurrency.abstract.repo import IRepository
 
-from concurrency.domains.dto import BaseDTO
-from concurrency.gateways.models import PostgresConcurrencySettings
-from concurrency.abstract.repo import AbstractRepository
+if TYPE_CHECKING:
+    from concurrency.domains.dto import BaseDTO
 
 
-class ConcurrencyRepo(AbstractRepository):
-    async def fetch_one(self, pk: int | str) -> PostgresConcurrencySettings | None:
-        result = await self._session.execute(
-            select(PostgresConcurrencySettings).where(
-                PostgresConcurrencySettings.id == pk
+class ConcurrencyRepo(IRepository):
+    async def fetch_all(self) -> Sequence[PGConcurrencySettings]:
+        async with self._session.begin():
+            result = await self._session.execute(
+                select(PGConcurrencySettings).order_by(PGConcurrencySettings.id)
             )
-        )
-        return result.scalar_one_or_none()
-
-    async def fetch_all(self) -> Sequence[PostgresConcurrencySettings]:
-        result = await self._session.execute(
-            select(PostgresConcurrencySettings).order_by(PostgresConcurrencySettings.id)
-        )
         return result.scalars().all()
 
-    async def create(self, model: BaseDTO) -> PostgresConcurrencySettings:
-        result = await self._session.execute(
-            insert(PostgresConcurrencySettings)
-            .values(**model.model_dump(exclude={"id"}, exclude_none=True))
-            .returning(PostgresConcurrencySettings)
-        )
-        await self._session.commit()
+    async def create(self, model: BaseDTO) -> PGConcurrencySettings:
+        async with self._session.begin():
+            result = await self._session.execute(
+                insert(PGConcurrencySettings)
+                .values(**model.model_dump(exclude={"id"}, exclude_none=True))
+                .returning(PGConcurrencySettings)
+            )
         return result.scalar_one()
 
-    async def update(self, model: BaseDTO) -> PostgresConcurrencySettings:
-        print(model.model_dump(exclude_none=True))
-        result = await self._session.execute(
-            update(PostgresConcurrencySettings)
-            .values(**model.model_dump(exclude={"id"}, exclude_none=True))
-            .returning(PostgresConcurrencySettings)
-        )
-        await self._session.commit()
+    async def update(self, model: BaseDTO) -> PGConcurrencySettings:
+        async with self._session.begin():
+            result = await self._session.execute(
+                update(PGConcurrencySettings)
+                .values(**model.model_dump(exclude={"id"}, exclude_none=True))
+                .returning(PGConcurrencySettings)
+            )
         return result.scalar_one()

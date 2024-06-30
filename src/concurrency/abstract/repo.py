@@ -1,24 +1,23 @@
+from __future__ import annotations
+from typing import Sequence, Any, TYPE_CHECKING
 import abc
-from typing import Sequence, Any
-from sqlalchemy.ext.asyncio import AsyncSession
-from concurrency.domains.dto import BaseDTO
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from concurrency.domains.dto import BaseDTO
 
 
-class AbstractRepository(abc.ABC):
+class IRepository(abc.ABC):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
     @abc.abstractmethod
-    async def fetch_one(self, pk: int | str) -> Any:
-        """Выбрать запись по уникальному идентификатору."""
+    async def create(self, model: BaseDTO) -> Any:
+        """Создать новую запись в БД."""
 
     @abc.abstractmethod
     async def update(self, model: BaseDTO) -> Any:
         """Обновить запись по уникальному идентификатору."""
-
-    @abc.abstractmethod
-    async def create(self, model: BaseDTO) -> Any:
-        """Создать новую запись в БД."""
 
     @abc.abstractmethod
     async def fetch_all(self) -> Sequence[Any]:
