@@ -39,7 +39,7 @@ class IQueryHandler(abc.ABC):
             connections, (queries.first, queries.second), (1, 2)
         ):
             conn.remove_query_loggers()
-            conn.add_query_logger(self.callback(query=queries.first, worker=worker))
+            conn.add_query_logger(self.callback(query=query, worker=worker))
 
     @abc.abstractmethod
     async def handle(self, query: IQuery) -> IQueryResult:
